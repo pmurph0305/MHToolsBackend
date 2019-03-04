@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 const phq9 = require('./phq9');
@@ -16,8 +17,9 @@ const db = knex({
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
-
+//TODO: verify user is user.
 
 app.listen(3001, ()=> {
     console.log("working on port 3001");
@@ -27,6 +29,6 @@ app.get('/', (req, res) => {
     res.send('working.')
 })
 
-app.post('/phq9/:id/:score', phq9.handlePHQPost(db));
+app.post('/phq9/:id/', phq9.handlePHQPost(db));
 
 app.get('/phq9/:id', phq9.handlePHQ9DataGet(db));
