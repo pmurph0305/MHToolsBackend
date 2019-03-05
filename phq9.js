@@ -1,5 +1,7 @@
 const handlePHQ9Post = (db) => (req, res) => {
-    const {id, scores, score} = req.body;
+    const {id} = req.params;
+    const {scores, score} = req.body;
+    var allowNewSubmission = false;
     db.select('user_id','date','phq9_id')
     .from('phq9')
     .where({
@@ -8,11 +10,15 @@ const handlePHQ9Post = (db) => (req, res) => {
     .orderBy('phq9_id', 'desc')
     .limit(1)
     .then(data => {
-        // check if user has submitted a phq9 today.
-        latest = data[0]['date'].toISOString().slice(0,10);
-        let today = new Date().toISOString().slice(0,10);
-        if (today != latest) {
-            allowNewSubmission = true;
+        // check if user has submitted a phq9 today. Or if they have no previous data.
+        if (data.length) {
+            latest = data[0]['date'].toISOString().slice(0,10);
+            let today = new Date().toISOString().slice(0,10);
+            if (today != latest) {
+                allowNewSubmission = true;
+            } else {
+                allowNewSubmission = false;
+            }
         } else {
             allowNewSubmission = true;
         }
@@ -29,14 +35,16 @@ const handlePHQ9Post = (db) => (req, res) => {
             })
             .into('phq9')
             .then(success => res.json("PHQ-9 submission successful."))
-            .catch(err => res.status(500).json('Error submitting PHQ-9 data, please try again.'))
+            .catch(err => res.status(500).json('Error 1: Problem submitting PHQ-9 data, please try again.'))
         } else {
-            res.json('You have already submitted a PHQ9 today.');
+            res.json('You have already submitted the PHQ-9 today.');
         }
     })
+    .catch(err => res.status(500).json('Error 2: Problem submitting PHQ-9 data, please try again.'))
 }
 
 const handlePHQ9DataGet = (db) => (req, res) => {
+    console.log("get phq9")
     const {id} = req.params;
     db.select('*')
         .from('phq9')
