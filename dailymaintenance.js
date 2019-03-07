@@ -26,7 +26,6 @@ const handleDailyMaintenanceGet = (db, knex) => (req, res) => {
             .then(latestDate => {
                 // if it found a previous entry for the user.
                 if (Array.isArray(latestDate) && latestDate.length) {
-                    console.log("latestDate", latestDate[0]['date']);
                     // select all the entries for that date.
                     db.select('user_id','task','rank')
                     .from('dmtasks')
@@ -82,7 +81,78 @@ const handleDailyMaintenanceGet = (db, knex) => (req, res) => {
     });
 }
 
+handleDailyMaintenanceGetDateChange = (db) => (req, res) => {
+    // destruct params
+    const {id, date, change} = req.params;
+    // for decreasing dates
+    if (change < 0) {
+        // select the closest less than date.
+        db.select('date')
+        .from('dmtasks')
+        .where({
+            user_id: id
+        })
+        .andWhere('date', '<', date)
+        .orderBy('date','desc')
+        .limit(1)
+        .then(data => {
+            // make sure there is a date
+            if (Array.isArray(data) && data.length) {
+                // select all the tasks for that date and return them.
+                db.select('*')
+                .from('dmtasks')
+                .where({
+                    user_id: id,
+                    date: data[0]['date']
+                })
+                .orderBy('rank', 'asc')
+                .then(tasks => {
+                    res.json(tasks);
+                })
+                .catch(err => res.status(500).json('Error decreasing date for daily maintenance data. ' + err))
+            } else {
+                res.json("No data exists for previous date for user.")
+            }
+        })
+        .catch(err => res.status(500).json('Error changing date for daily maintenance data. ' + err));
+    } else {
+        // for increasing date
+        // select closest greater than date
+        db.select('date')
+        .from('dmtasks')
+        .where({
+            user_id: id
+        })
+        .andWhere('date', '>', date)
+        .orderBy('date','asc')
+        .limit(1)
+        .then(data => {
+            // make sure a date was found.
+            if (Array.isArray(data) && data.length) {
+                // select and return tasks for that date
+                db.select('*')
+                .from('dmtasks')
+                .where({
+                    user_id: id,
+                    date: data[0]['date']
+                })
+                .orderBy('rank', 'asc')
+                .then(tasks => {
+                    res.json(tasks);
+                })
+                .catch(err => res.status(500).json('Error decreasing date for daily maintenance data. ' + err))
+            } else {
+                res.json("No data exists for previous date for user.")
+            }
+        })
+        .catch(err => res.status(500).json('Error changing date for daily maintenance data. ' + err));
+    }
+}
+
+
 const handleDailyMaintenancePost = (db) => (req, res) => {
+    // TODO: handle adding tasks to previous date, or reject them and only allow new tasks
+    // on the current date.
     const {id} = req.params;
     const {task, rank} = req.body;
     // insert new task, and return it.
@@ -98,11 +168,26 @@ const handleDailyMaintenancePost = (db) => (req, res) => {
     .catch(err => res.status(500).json('Error inserting new task. ' + err))
 }
 
+const handleDailyMaintenancePutComplete = (db) => (req, res) => {
+    // desctruct params
+    const {id, task_id, completed} = req.params;
+    // update the users task id based on if it's completed or not.
+    db('dmtasks')
+    .where({
+        user_id: id,
+        task_id: task_id
+    })
+    .update({
+        completed: completed
+    })
+    .catch(err => res.status(500).json("Error updating task for user. " + err));
+    res.json("Successfully updated task");
+}
+
 const handleDailyMaintenancePut = (db) => (req, res) => {
     // destructure id and tasks.
     const {id} = req.params;
     const {tasks} = req.body;
-    console.log("Put DM", tasks.length);
     if (tasks.length) {
         let success = true;
         // update each task for user id.
@@ -142,8 +227,10 @@ const handleDailyMaintenanceDelete = (db) => (req, res) => {
 
 module.exports = {
     handleDailyMaintenanceGet,
+    handleDailyMaintenanceGetDateChange,
     handleDailyMaintenancePost,
     handleDailyMaintenancePut,
+    handleDailyMaintenancePutComplete,
     handleDailyMaintenanceDelete,
 }
 

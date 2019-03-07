@@ -39,8 +39,12 @@ app.post('/phq9/:id', phq9.handlePHQPost(db));
 // Daily Maintenance Routes
 app.get('/dm/:id/:date', dm.handleDailyMaintenanceGet(db));
 
+app.get('/dm/:id/:date/:change', dm.handleDailyMaintenanceGetDateChange(db));
+
 app.delete('/dm/:id/:task_id', dm.handleDailyMaintenanceDelete(db));
 
 app.post('/dm/:id', dm.handleDailyMaintenancePost(db));
 
 app.put('/dm/:id', dm.handleDailyMaintenancePut(db));
+
+app.put('/dm/:id/:task_id/:completed', dm.handleDailyMaintenancePutComplete(db));
