@@ -38,7 +38,6 @@ const handleDailyMaintenanceGet = (db, knex) => (req, res) => {
                         db.transaction(trx => {
                             return Promise.all(
                                 tasks.map((task => {
-                                    console.log("task", task)
                                     return db.insert({
                                         user_id: task['user_id'],
                                         task: task['task'],
@@ -95,15 +94,16 @@ handleDailyMaintenanceGetDateChange = (db) => (req, res) => {
         .andWhere('date', '<', date)
         .orderBy('date','desc')
         .limit(1)
+        .first()
         .then(data => {
             // make sure there is a date
-            if (Array.isArray(data) && data.length) {
+            if (data) {
                 // select all the tasks for that date and return them.
                 db.select('*')
                 .from('dmtasks')
                 .where({
                     user_id: id,
-                    date: data[0]['date']
+                    date: data['date']
                 })
                 .orderBy('rank', 'asc')
                 .then(tasks => {
@@ -126,15 +126,16 @@ handleDailyMaintenanceGetDateChange = (db) => (req, res) => {
         .andWhere('date', '>', date)
         .orderBy('date','asc')
         .limit(1)
+        .first()
         .then(data => {
             // make sure a date was found.
-            if (Array.isArray(data) && data.length) {
+            if (data) {
                 // select and return tasks for that date
                 db.select('*')
                 .from('dmtasks')
                 .where({
                     user_id: id,
-                    date: data[0]['date']
+                    date: data['date']
                 })
                 .orderBy('rank', 'asc')
                 .then(tasks => {

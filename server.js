@@ -2,8 +2,11 @@ const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const phq9 = require('./phq9');
 const dm = require('./dailymaintenance');
+const history = require('./history');
+const phq9 = require('./phq9');
+
+
 
 const knex = require('knex');
 const db = knex({
@@ -31,11 +34,6 @@ app.get('/', (req, res) => {
     res.send('working.')
 })
 
-// PHQ9 Routes
-app.get('/phq9/:id', phq9.handlePHQ9DataGet(db));
-
-app.post('/phq9/:id', phq9.handlePHQPost(db));
-
 // Daily Maintenance Routes
 app.get('/dm/:id/:date', dm.handleDailyMaintenanceGet(db));
 
@@ -48,3 +46,14 @@ app.post('/dm/:id', dm.handleDailyMaintenancePost(db));
 app.put('/dm/:id', dm.handleDailyMaintenancePut(db));
 
 app.put('/dm/:id/:task_id/:completed', dm.handleDailyMaintenancePutComplete(db));
+
+// History routes
+
+app.get('/history/dm/:id/', history.handleHistoryGetDM(db));
+
+app.get('/history/phq9/:id', history.handleHistoryGetPHQ9(db));
+
+// PHQ9 Routes
+app.get('/phq9/:id', phq9.handlePHQ9DataGet(db));
+
+app.post('/phq9/:id', phq9.handlePHQPost(db));
