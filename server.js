@@ -41,6 +41,12 @@ app.get('/', (req, res) => {
 app.get('/copingskills/:id', copingSkills.handleCopingSkillsGet(db));
 // Insert new coping skill to users list. (And share if shared).
 app.post('/copingskills/:id', copingSkills.handleCopingSkillsPost(db));
+// Update existing skill on users list.
+app.put('/copingskills/:id/:skill_id', copingSkills.handleCopingSkillsPut(db));
+// Get shared skills by new, top, or rand.
+app.get('/copingskills/shared/:id/:type', copingSkills.handleCopingSkillsSharedGet(db));
+// Add a shared skill to users own list.
+app.post('/copingskills/shared/:id/:skill_id', copingSkills.handleCopingSkillsSharedPost(db));
 
 // Daily Maintenance Routes
 app.get('/dm/:id/:date', dm.handleDailyMaintenanceGet(db));
