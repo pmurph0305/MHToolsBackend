@@ -1,3 +1,4 @@
+// for promise all transaction when re-inserting all users previous tasks on a new day.
 var Promise = require('bluebird')
 
 const handleDailyMaintenanceGet = (db, knex) => (req, res) => {

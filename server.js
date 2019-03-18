@@ -2,6 +2,8 @@ const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 
+// Modules for each page.
+const copingSkills = require('./copingskills');
 const dm = require('./dailymaintenance');
 const history = require('./history');
 const phq9 = require('./phq9');
@@ -33,6 +35,12 @@ app.listen(3001, ()=> {
 app.get('/', (req, res) => {
     res.send('working.')
 })
+
+// Coping Skills Routes
+// Get all user's coping skills.
+app.get('/copingskills/:id', copingSkills.handleCopingSkillsGet(db));
+// Insert new coping skill to users list. (And share if shared).
+app.post('/copingskills/:id', copingSkills.handleCopingSkillsPost(db));
 
 // Daily Maintenance Routes
 app.get('/dm/:id/:date', dm.handleDailyMaintenanceGet(db));
