@@ -39,10 +39,14 @@ app.get('/', (req, res) => {
 // Coping Skills Routes
 // Get all user's coping skills.
 app.get('/copingskills/:id', copingSkills.handleCopingSkillsGet(db));
+// delete coping skill from a users list.
+app.delete('/copingskills/:id/:skill_id', copingSkills.handleCopingSkillsDelete(db));
 // Insert new coping skill to users list. (And share if shared).
 app.post('/copingskills/:id', copingSkills.handleCopingSkillsPost(db));
 // Update existing skill on users list.
 app.put('/copingskills/:id/:skill_id', copingSkills.handleCopingSkillsPut(db));
+
+// Shared coping skills.
 // Get shared skills by new, top, or rand.
 app.get('/copingskills/shared/:id/:type', copingSkills.handleCopingSkillsSharedGet(db));
 // Add a shared skill to users own list.

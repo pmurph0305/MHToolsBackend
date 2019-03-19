@@ -3,17 +3,39 @@ const handleCopingSkillsGet = (db) => (req,res) => {
     const {id} = req.params;
    // res.json("working coping.")
     db.select('*')
-        .from('copingskills')
-        .where({user_id: id})
-        .orderBy('rank','asc')
-        .then(data => {
-            if (Array.isArray(data) && data.length) {
-                res.json(data);
-            } else {
-                res.json("No coping skills found.")
-            }
-        })
-        .catch(err=> res.status(500).json("Error getting coping skills. " + err))
+    .from('copingskills')
+    .where({user_id: id})
+    .orderBy('rank','asc')
+    .then(data => {
+        if (Array.isArray(data) && data.length) {
+            res.json(data);
+        } else {
+            res.json("No coping skills found.")
+        }
+    })
+    .catch(err=> res.status(500).json("Error getting coping skills. " + err))
+}
+
+const handleCopingSkillsDelete = (db) => (req, res) => {
+    const { id, skill_id } = req.params;
+    // Delete skill_id for user_id
+    db('copingskills')
+    .where({
+        user_id: id,
+        skill_id: skill_id
+    })
+    .del()
+    .then(data => {
+        // Returns # of effected cells.
+        if (data === 1) {
+            // Deleted a row.
+            res.sendStatus(200);
+        } else {
+            // Didn't find a row to delete.
+            res.status(500).json("No skill with that id, or improper user id.")
+        }
+    })
+    .catch(err => res.status(500).json("Error deleting coping skill. " + err));
 }
 
 const handleCopingSkillsPost = (db) => (req,res) => {
@@ -141,10 +163,15 @@ const handleCopingSkillsSharedGet = (db) => (req, res) => {
         .catch(err => res.status(500).json("Error getting top shared coping skills. " + err));
     } else if (type === 'rand') {
         let nid = Number(id);
-        // Select random rows from postgres where shared & shareable. (ignore own users shared skills)
+        if (Number.isInteger(nid)) {
+             // Select random rows from postgres where shared & shareable. (ignore own users shared skills)
         db.raw("SELECT * FROM copingskills WHERE shareable = TRUE AND shared = TRUE AND user_id != " + nid + " ORDER BY random()")
         .then(data => res.json(data.rows))
         .catch(err => res.status(500).json("Error getting random coping skills. " + err));
+        } else {
+            res.status(400).json("Improper user_id used to get shared coping skills.")
+        }
+       
     } else {
         res.status(400).json("Improper shared coping skill request");
     }
@@ -156,19 +183,15 @@ const handleCopingSkillsSharedPost = (db) => (req, res) => {
     const { id, skill_id } = req.params;
     // get rank to add too.
     new Promise((resolve, reject) => {
-        db.select('rank')
+        db.max('rank')
         .from('copingskills')
         .where({
             user_id: id
         })
-        .orderBy('rank','desc')
-        .first()
         .then(data => {
-            if (data) {
-                // Add new skill to bottom of list.
-                resolve(data.rank+1);
+            if (Array.isArray(data) && data.length) {
+                resolve(data[0].max+1)
             } else {
-                // User's first coping skill.
                 resolve(0);
             }
         })
@@ -201,6 +224,9 @@ const handleCopingSkillsSharedPost = (db) => (req, res) => {
                 // return the newly added skill for the user.
                 .then(data=> res.json(data))
                 .catch(err => res.status(500).json("Error adding shared coping skill. " + err));
+            } else {
+                // Didn't find the shared skill with that skill_id.
+                res.status(400).json("No shared skill with that skill_id.")
             }
         })
         .catch(err => res.status(500).json("Error getting shared skill to add. " + err));
@@ -210,6 +236,7 @@ const handleCopingSkillsSharedPost = (db) => (req, res) => {
 
 module.exports = {
     handleCopingSkillsGet,
+    handleCopingSkillsDelete,
     handleCopingSkillsPost,
     handleCopingSkillsPut,
     handleCopingSkillsSharedGet,
