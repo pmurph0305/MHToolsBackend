@@ -28,8 +28,8 @@ const handleCopingSkillsDelete = (db) => (req, res) => {
     .then(data => {
         // Returns # of effected cells.
         if (data === 1) {
-            // Deleted a row.
-            res.sendStatus(200);
+            // Deleted a row.i
+            res.json({skill_id: skill_id});
         } else {
             // Didn't find a row to delete.
             res.status(500).json("No skill with that id, or improper user id.")
