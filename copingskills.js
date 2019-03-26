@@ -109,13 +109,13 @@ const handleCopingSkillsPut = (db) => (req, res) => {
 }
 
 
-// Not needed?
 const handleCopingSkillsSharePut = (db) => (req, res) => {
     // update skill to be shared = true, and shareable = false
     // shareable is set to false so other users who in the future
     // add it to their list, can not re-share the same coping skill.
     const { id, skill_id } = req.params;
     db('copingskills')
+    .returning('*')
     .where({
         user_id: id,
         skill_id: skill_id,
@@ -124,7 +124,7 @@ const handleCopingSkillsSharePut = (db) => (req, res) => {
         shared: true,
         shareable: true,
     })
-    .then(data => res.sendStatus(200))
+    .then(data => res.json(data))
     .catch(err => res.status(500).json("Error sharing coping skill. " + err));
 }
 
@@ -241,6 +241,7 @@ module.exports = {
     handleCopingSkillsPut,
     handleCopingSkillsSharedGet,
     handleCopingSkillsSharedPost,
+    handleCopingSkillsSharePut,
 }
 
 //CREATE TABLE copingskills (skill_id SERIAL PRIMARY KEY, user_id INTEGER REFERENCES users(id), title VARCHAR NOT NULL, description VARCHAR NOT NULL, date_added DATE NOT NULL DEFAULT CURRENT_DATE, rank INTEGER NOT NULL, shared BOOLEAN NOT NULL DEFAULT FALSE);

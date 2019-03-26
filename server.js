@@ -45,6 +45,8 @@ app.delete('/copingskills/:id/:skill_id', copingSkills.handleCopingSkillsDelete(
 app.post('/copingskills/:id', copingSkills.handleCopingSkillsPost(db));
 // Update existing skill on users list.
 app.put('/copingskills/:id/:skill_id', copingSkills.handleCopingSkillsPut(db));
+// Share a user's coping skill.
+app.put('/copingskills/share/:id/:skill_id', copingSkills.handleCopingSkillsSharePut(db));
 
 // Shared coping skills.
 // Get shared skills by new, top, or rand.
