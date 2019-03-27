@@ -1,7 +1,7 @@
 
 const handleCopingSkillsGet = (db) => (req,res) => {
+    // Get all users coping skills.
     const {id} = req.params;
-   // res.json("working coping.")
     db.select('*')
     .from('copingskills')
     .where({user_id: id})
@@ -35,6 +35,7 @@ const handleCopingSkillsDelete = (db) => (req, res) => {
 }
 
 const handleCopingSkillsPost = (db) => (req,res) => {
+    // Adds a new coping skill to the users list.
     const { id } = req.params;
     const { title, desc, shared } = req.body;
     let { rank } = req.body;
@@ -84,6 +85,7 @@ const handleCopingSkillsPost = (db) => (req,res) => {
 }
 
 const handleCopingSkillsPut = (db) => (req, res) => {
+    // Update users coping skill.
     const { id, skill_id } = req.params;
     const { title, desc, shared } = req.body;
     // update the users coping skill with new data.
@@ -95,10 +97,6 @@ const handleCopingSkillsPut = (db) => (req, res) => {
     .update({
         title: title,
         description: desc,
-        shared: shared,
-        // If the user shared the skill, don't let others share it.
-        // So that user's can't add other's shared skills, then re-share it.
-        shareable: true
     }, '*')
     .then(data => res.json(data))
     .catch(err => res.status(500).json("Error updating coping skill. " + err));
@@ -106,9 +104,8 @@ const handleCopingSkillsPut = (db) => (req, res) => {
 
 
 const handleCopingSkillsSharePut = (db) => (req, res) => {
-    // update skill to be shared = true, and shareable = false
-    // shareable is set to false so other users who in the future
-    // add it to their list, can not re-share the same coping skill.
+    // Share a user's unshared coping skill.
+    // shareable is changed on user post.
     const { id, skill_id } = req.params;
     db('copingskills')
     .returning('*')
@@ -117,6 +114,8 @@ const handleCopingSkillsSharePut = (db) => (req, res) => {
         skill_id: skill_id,
     })
     .update({
+        // If the user shared the skill, don't let others share it.
+        // So that user's can't add other's shared skills, then re-share it.
         shared: true,
         shareable: true,
     })
@@ -124,8 +123,8 @@ const handleCopingSkillsSharePut = (db) => (req, res) => {
     .catch(err => res.status(500).json("Error sharing coping skill. " + err));
 }
 
-// Adds getting the list of shared coping skills.
 const handleCopingSkillsSharedGet = (db) => (req, res) => {
+    // Get shared coping skills.
     const { id, type } = req.params;
     if (type === 'new') {
         db('copingskills')
@@ -211,6 +210,7 @@ const handleCopingSkillsSharedPost = (db) => (req, res) => {
                 .insert({
                     user_id: id,
                     shareable: false,
+                    // shareable & shared as false so user can't reshare a skill.
                     shared: false,
                     title: data[0].title,
                     description: data[0].description,
