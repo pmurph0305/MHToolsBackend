@@ -7,11 +7,7 @@ const handleCopingSkillsGet = (db) => (req,res) => {
     .where({user_id: id})
     .orderBy('rank','asc')
     .then(data => {
-        if (Array.isArray(data) && data.length) {
-            res.json(data);
-        } else {
-            res.json("No coping skills found.")
-        }
+        res.json(data);
     })
     .catch(err=> res.status(500).json("Error getting coping skills. " + err))
 }

@@ -36,6 +36,12 @@ app.get('/', (req, res) => {
     res.send('working.')
 })
 
+// TODO: user login
+// TODO: user verification when accessing user data.
+// TODO: CBT routes.
+// TOOD: History routes.
+
+
 // Coping Skills Routes
 // Get all user's coping skills.
 app.get('/copingskills/:id', copingSkills.handleCopingSkillsGet(db));
