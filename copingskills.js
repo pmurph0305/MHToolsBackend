@@ -69,6 +69,7 @@ const handleCopingSkillsPost = (db) => (req,res) => {
             title: title,
             description: desc,
             shareable: true,
+            shared_from_id: -1, // users own skills set as default -1 shared_from so it doesn't display in shared skills. (as we don't have skill_id yet)
         })
         .into('copingskills')
         .returning('*')
@@ -126,50 +127,66 @@ const handleCopingSkillsSharePut = (db) => (req, res) => {
 const handleCopingSkillsSharedGet = (db) => (req, res) => {
     // Get shared coping skills.
     const { id, type } = req.params;
-    if (type === 'new') {
-        db('copingskills')
-        .returning('*')
+    db('copingskills')
+        // .select('shared_from_id')
+        .select(db.raw('ARRAY_AGG(shared_from_id) as added'))
         .where({
-            shared: true,
-            shareable: true,
+            user_id: id,
         })
-        // don't return users own shared skills.
-        .whereNot({
-            user_id: id
+        .then(users_skills => {
+            // if the user has no skills yet, use -1 as their array so all shared skills are returned.
+            if (!users_skills[0].added) {
+                users_skills[0].added = [-1];
+            }
+            if (type === 'new') {
+                db('copingskills')
+                .returning('*')
+                .where({
+                    shared: true,
+                    shareable: true,
+                })
+                // don't show users own skills.
+                .whereNot({
+                    user_id: id,
+                })
+                // Don't return skills user already added // their own skills.
+                .whereNotIn('skill_id', users_skills[0].added)
+                // sort by newest date added.
+                .orderBy('date_added', 'desc')
+                .then(data => res.json(data))
+                .catch(err => res.status(500).json("Error getting newest shared coping skills. " + err));
+            } else if (type === 'top') {
+                db('copingskills')
+                .returning('*')
+                .where({
+                    shared: true,
+                    shareable: true,
+                })
+                // don't show users own skills.
+                .whereNot({
+                    user_id: id,
+                })
+                // Don't return skills user already added // their own skills.
+                .whereNotIn('skill_id', users_skills[0].added)
+                // sort by highest number of times added.
+                .orderBy('times_added', 'desc')
+                .then(data => res.json(data))
+                .catch(err => res.status(500).json("Error getting top shared coping skills. " + err));
+            } else if (type === 'rand') {
+                let nid = Number(id);
+                if (Number.isInteger(nid)) {
+                    // Select random rows from postgres where shared & shareable. (ignore own users shared skills & shared skills already added.)
+                db.raw("SELECT * FROM copingskills WHERE shareable = TRUE AND shared = TRUE AND user_id != "+ nid +" AND NOT skill_id = ALL (array[" + users_skills[0].added + "]) ORDER BY random()")
+                .then(data => res.json(data.rows))
+                .catch(err => res.status(500).json("Error getting random coping skills. " + err));
+                } else {
+                    res.status(400).json("Improper user_id used to get shared coping skills.")
+                }
+            
+            } else {
+                res.status(400).json("Improper shared coping skill request");
+            }
         })
-        // sort by newest date added.
-        .orderBy('date_added', 'desc')
-        .then(data => res.json(data))
-        .catch(err => res.status(500).json("Error getting newest shared coping skills. " + err));
-    } else if (type === 'top') {
-        db('copingskills')
-        .returning('*')
-        .where({
-            shared: true,
-            shareable: true,
-        })
-        // don't return users own shared skills.
-        .whereNot({
-            user_id: id
-        })
-        // sort by highest number of times added.
-        .orderBy('times_added', 'desc')
-        .then(data => res.json(data))
-        .catch(err => res.status(500).json("Error getting top shared coping skills. " + err));
-    } else if (type === 'rand') {
-        let nid = Number(id);
-        if (Number.isInteger(nid)) {
-             // Select random rows from postgres where shared & shareable. (ignore own users shared skills)
-        db.raw("SELECT * FROM copingskills WHERE shareable = TRUE AND shared = TRUE AND user_id != " + nid + " ORDER BY random()")
-        .then(data => res.json(data.rows))
-        .catch(err => res.status(500).json("Error getting random coping skills. " + err));
-        } else {
-            res.status(400).json("Improper user_id used to get shared coping skills.")
-        }
-       
-    } else {
-        res.status(400).json("Improper shared coping skill request");
-    }
 }
 
 
@@ -215,6 +232,7 @@ const handleCopingSkillsSharedPost = (db) => (req, res) => {
                     title: data[0].title,
                     description: data[0].description,
                     rank: rank,
+                    shared_from_id: data[0].skill_id,
                 })
                 .returning('*')
                 // return the newly added skill for the user.
