@@ -34,6 +34,8 @@ const handleDailyMaintenanceGet = (db, knex) => (req, res) => {
                         user_id: id,
                         date: latestDate[0]['date']
                     })
+                    // order by rank, so when transactions are done, they are returned in correct order.
+                    .orderBy('rank', 'asc')
                     .then(tasks => {
                         // Create a transaction for inserting all the data for the current date using the previous dates entries.
                         db.transaction(trx => {
@@ -52,6 +54,7 @@ const handleDailyMaintenanceGet = (db, knex) => (req, res) => {
                             .then(data => {
                                 // Succesfully copied previous dates data to current date
                                 // So map and return the data from the promises.
+                                console.log(data);
                                 res.json(data.map((d=> {
                                     return d[0];
                                 })))
