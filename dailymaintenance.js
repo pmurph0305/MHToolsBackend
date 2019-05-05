@@ -54,7 +54,6 @@ const handleDailyMaintenanceGet = (db, knex) => (req, res) => {
                             .then(data => {
                                 // Succesfully copied previous dates data to current date
                                 // So map and return the data from the promises.
-                                console.log(data);
                                 res.json(data.map((d=> {
                                     return d[0];
                                 })))

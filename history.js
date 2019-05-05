@@ -30,6 +30,7 @@ const handleHistoryGetDM = (db) => (req, res) => {
     .select(db.raw('date, COUNT(task_id) AS total, SUM(completed::int) AS completed'))
     .where({user_id : id})
     .groupBy('date')
+    .orderBy('date', 'asc')
     .then(data=> {
         if (Array.isArray(data) && data.length) {
             res.json(data);

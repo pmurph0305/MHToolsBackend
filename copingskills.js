@@ -68,7 +68,6 @@ const handleCopingSkillsPost = (db) => (req,res) => {
             shared: shared,
             title: title,
             description: desc,
-            shareable: true,
             shared_from_id: -1, // users own skills set as default -1 shared_from so it doesn't display in shared skills. (as we don't have skill_id yet)
         })
         .into('copingskills')
@@ -106,7 +105,6 @@ const handleCopingSkillsPut = (db) => (req, res) => {
 
 const handleCopingSkillsSharePut = (db) => (req, res) => {
     // Share a user's unshared coping skill.
-    // shareable is changed on user post.
     const { id, skill_id } = req.params;
     db('copingskills')
     .returning('*')
@@ -115,10 +113,7 @@ const handleCopingSkillsSharePut = (db) => (req, res) => {
         skill_id: skill_id,
     })
     .update({
-        // If the user shared the skill, don't let others share it.
-        // So that user's can't add other's shared skills, then re-share it.
         shared: true,
-        shareable: true,
     })
     .then(data => res.json(data))
     .catch(err => res.status(500).json("Error sharing coping skill. " + err));
@@ -143,7 +138,6 @@ const handleCopingSkillsSharedGet = (db) => (req, res) => {
                 .returning('*')
                 .where({
                     shared: true,
-                    shareable: true,
                 })
                 // don't show users own skills.
                 .whereNot({
@@ -160,7 +154,6 @@ const handleCopingSkillsSharedGet = (db) => (req, res) => {
                 .returning('*')
                 .where({
                     shared: true,
-                    shareable: true,
                 })
                 // don't show users own skills.
                 .whereNot({
@@ -175,8 +168,8 @@ const handleCopingSkillsSharedGet = (db) => (req, res) => {
             } else if (type === 'rand') {
                 let nid = Number(id);
                 if (Number.isInteger(nid)) {
-                    // Select random rows from postgres where shared & shareable. (ignore own users shared skills & shared skills already added.)
-                db.raw("SELECT * FROM copingskills WHERE shareable = TRUE AND shared = TRUE AND user_id != "+ nid +" AND NOT skill_id = ALL (array[" + users_skills[0].added + "]) ORDER BY random()")
+                    // Select random rows from postgres where shared (ignore own users shared skills & shared skills already added.)
+                db.raw("SELECT * FROM copingskills WHERE shared = TRUE AND user_id != "+ nid +" AND NOT skill_id = ALL (array[" + users_skills[0].added + "]) ORDER BY random()")
                 .then(data => res.json(data.rows))
                 .catch(err => res.status(500).json("Error getting random coping skills. " + err));
                 } else {
@@ -214,7 +207,6 @@ const handleCopingSkillsSharedPost = (db) => (req, res) => {
         db('copingskills')
         .where({ 
             skill_id: skill_id,
-            shareable: true,
             shared: true,
         })
         .increment('times_added', 1)
@@ -226,8 +218,7 @@ const handleCopingSkillsSharedPost = (db) => (req, res) => {
                 db('copingskills')
                 .insert({
                     user_id: id,
-                    shareable: false,
-                    // shareable & shared as false so user can't reshare a skill.
+                    // shared as false so user can't reshare a skill.
                     shared: false,
                     title: data[0].title,
                     description: data[0].description,
