@@ -9,7 +9,7 @@ const requireAuthorization = (req, res, next) => {
   } else {
     return redisClient.get(authorization, function(err, reply) {
       if (err || !reply) {
-          res.status(401).json("unauthorized Request");
+          return res.status(401).json("Unauthorized Request");
       }
       return next();
     })
@@ -21,7 +21,7 @@ const authorizeNewSesssion = (email, id) => {
   return createRedisToken(token, id)
     .then(() => ({ id, token }))
     .catch(err => {
-
+      console.log('create token error', err);
     });
 };
 

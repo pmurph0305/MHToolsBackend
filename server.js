@@ -67,15 +67,15 @@ app.post('/copingskills/shared/:id/:skill_id', copingSkills.handleCopingSkillsSh
 // Daily Maintenance Routes
 app.get('/dm/:id/:date', requireAuthorization, dm.handleDailyMaintenanceGet(db));
 
-app.get('/dm/:id/:date/:change', dm.handleDailyMaintenanceGetDateChange(db));
+app.get('/dm/:id/:date/:change', requireAuthorization, dm.handleDailyMaintenanceGetDateChange(db));
 
-app.delete('/dm/:id/:task_id', dm.handleDailyMaintenanceDelete(db));
+app.delete('/dm/:id/:task_id', requireAuthorization, dm.handleDailyMaintenanceDelete(db));
 
-app.post('/dm/:id', dm.handleDailyMaintenancePost(db));
+app.post('/dm/:id', requireAuthorization, dm.handleDailyMaintenancePost(db));
 
-app.put('/dm/:id', dm.handleDailyMaintenancePut(db));
+app.put('/dm/:id', requireAuthorization, dm.handleDailyMaintenancePut(db));
 
-app.put('/dm/:id/:task_id/:completed', dm.handleDailyMaintenancePutComplete(db));
+app.put('/dm/:id/:task_id/:completed', requireAuthorization, dm.handleDailyMaintenancePutComplete(db));
 
 // History routes
 
