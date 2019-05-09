@@ -1,13 +1,16 @@
+const bcrypt = require('bcrypt');
 const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
+
 
 // Modules for each page.
 const copingSkills = require('./copingskills');
 const dm = require('./dailymaintenance');
 const history = require('./history');
+const { requireAuthorization } = require('./jwtAuth')
 const phq9 = require('./phq9');
-
+const signin = require('./signin');
 
 
 const knex = require('knex');
@@ -37,6 +40,7 @@ app.get('/', (req, res) => {
 })
 
 // TODO: user login
+app.post('/signin', signin.handleSignin(db, bcrypt));
 // TODO: user verification when accessing user data.
 // TODO: CBT routes.
 // TOOD: History routes.
@@ -61,7 +65,7 @@ app.get('/copingskills/shared/:id/:type', copingSkills.handleCopingSkillsSharedG
 app.post('/copingskills/shared/:id/:skill_id', copingSkills.handleCopingSkillsSharedPost(db));
 
 // Daily Maintenance Routes
-app.get('/dm/:id/:date', dm.handleDailyMaintenanceGet(db));
+app.get('/dm/:id/:date', requireAuthorization, dm.handleDailyMaintenanceGet(db));
 
 app.get('/dm/:id/:date/:change', dm.handleDailyMaintenanceGetDateChange(db));
 
