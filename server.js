@@ -49,21 +49,21 @@ app.post('/register', register.handleRegister(db, bcrypt));
 
 // Coping Skills Routes
 // Get all user's coping skills.
-app.get('/copingskills/:id', copingSkills.handleCopingSkillsGet(db));
+app.get('/copingskills/:id', requireAuthorization, copingSkills.handleCopingSkillsGet(db));
 // delete coping skill from a users list.
-app.delete('/copingskills/:id/:skill_id', copingSkills.handleCopingSkillsDelete(db));
+app.delete('/copingskills/:id/:skill_id', requireAuthorization, copingSkills.handleCopingSkillsDelete(db));
 // Insert new coping skill to users list. (And share if shared).
-app.post('/copingskills/:id', copingSkills.handleCopingSkillsPost(db));
+app.post('/copingskills/:id', requireAuthorization, copingSkills.handleCopingSkillsPost(db));
 // Update existing skill on users list.
-app.put('/copingskills/:id/:skill_id', copingSkills.handleCopingSkillsPut(db));
+app.put('/copingskills/:id/:skill_id', requireAuthorization, copingSkills.handleCopingSkillsPut(db));
 // Share a user's coping skill.
-app.put('/copingskills/share/:id/:skill_id', copingSkills.handleCopingSkillsSharePut(db));
+app.put('/copingskills/share/:id/:skill_id', requireAuthorization, copingSkills.handleCopingSkillsSharePut(db));
 
 // Shared coping skills.
 // Get shared skills by new, top, or rand.
 app.get('/copingskills/shared/:id/:type', copingSkills.handleCopingSkillsSharedGet(db));
 // Add a shared skill to users own list.
-app.post('/copingskills/shared/:id/:skill_id', copingSkills.handleCopingSkillsSharedPost(db));
+app.post('/copingskills/shared/:id/:skill_id', requireAuthorization, copingSkills.handleCopingSkillsSharedPost(db));
 
 // Daily Maintenance Routes
 app.get('/dm/:id/:date', requireAuthorization, dm.handleDailyMaintenanceGet(db));
@@ -80,11 +80,11 @@ app.put('/dm/:id/:task_id/:completed', requireAuthorization, dm.handleDailyMaint
 
 // History routes
 // Daily maintenance % complete history by date.
-app.get('/history/dm/:id/', history.handleHistoryGetDM(db));
+app.get('/history/dm/:id/', requireAuthorization, history.handleHistoryGetDM(db));
 // PHQ9 score by date
-app.get('/history/phq9/:id', history.handleHistoryGetPHQ9(db));
+app.get('/history/phq9/:id', requireAuthorization, history.handleHistoryGetPHQ9(db));
 
 // PHQ9 Routes
-app.get('/phq9/:id', phq9.handlePHQ9DataGet(db));
+app.get('/phq9/:id', requireAuthorization, phq9.handlePHQ9DataGet(db));
 // Post a phq9 form
-app.post('/phq9/:id', phq9.handlePHQPost(db));
+app.post('/phq9/:id', requireAuthorization, phq9.handlePHQPost(db));
