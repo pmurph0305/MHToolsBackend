@@ -1,3 +1,4 @@
+// packages
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const express = require('express');
@@ -10,9 +11,10 @@ const dm = require('./dailymaintenance');
 const history = require('./history');
 const { requireAuthorization } = require('./jwtAuth')
 const phq9 = require('./phq9');
+const register = require('./register');
 const signin = require('./signin');
 
-
+// database set up
 const knex = require('knex');
 const db = knex({
     client: 'pg',
@@ -24,12 +26,9 @@ const db = knex({
     }
   });
 
-
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-
-//TODO: verify user is user.
 
 app.listen(3001, ()=> {
     console.log("working on port 3001");
@@ -39,12 +38,14 @@ app.get('/', (req, res) => {
     res.send('working.')
 })
 
-// TODO: user login
+// Sign in route.
 app.post('/signin', signin.handleSignin(db, bcrypt));
+
+// Register route.
+app.post('/register', register.handleRegister(db, bcrypt));
+
 // TODO: user verification when accessing user data.
 // TODO: CBT routes.
-// TOOD: History routes.
-
 
 // Coping Skills Routes
 // Get all user's coping skills.
@@ -66,24 +67,24 @@ app.post('/copingskills/shared/:id/:skill_id', copingSkills.handleCopingSkillsSh
 
 // Daily Maintenance Routes
 app.get('/dm/:id/:date', requireAuthorization, dm.handleDailyMaintenanceGet(db));
-
+// Get tasks when clicking next/previous (:change) date from current :date
 app.get('/dm/:id/:date/:change', requireAuthorization, dm.handleDailyMaintenanceGetDateChange(db));
-
+// Delete a user's task.
 app.delete('/dm/:id/:task_id', requireAuthorization, dm.handleDailyMaintenanceDelete(db));
-
+// Add a task to the user's list
 app.post('/dm/:id', requireAuthorization, dm.handleDailyMaintenancePost(db));
-
+// Update task info (description) for an array of tasks.
 app.put('/dm/:id', requireAuthorization, dm.handleDailyMaintenancePut(db));
-
+// Mark a task as complete/incomplete.
 app.put('/dm/:id/:task_id/:completed', requireAuthorization, dm.handleDailyMaintenancePutComplete(db));
 
 // History routes
-
+// Daily maintenance % complete history by date.
 app.get('/history/dm/:id/', history.handleHistoryGetDM(db));
-
+// PHQ9 score by date
 app.get('/history/phq9/:id', history.handleHistoryGetPHQ9(db));
 
 // PHQ9 Routes
 app.get('/phq9/:id', phq9.handlePHQ9DataGet(db));
-
+// Post a phq9 form
 app.post('/phq9/:id', phq9.handlePHQPost(db));
