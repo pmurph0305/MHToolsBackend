@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 
 
 // Modules for each page.
+const cbt = require('./cbt');
 const copingSkills = require('./copingskills');
 const dm = require('./dailymaintenance');
 const history = require('./history');
@@ -44,8 +45,15 @@ app.post('/signin', signin.handleSignin(db, bcrypt));
 // Register route.
 app.post('/register', register.handleRegister(db, bcrypt));
 
+
+// CBT routes.
 // TODO: user verification when accessing user data.
-// TODO: CBT routes.
+// adds a cbt event of the user to the database.
+app.post('/cbt/:id', cbt.handleCBTEventPost(db));
+// gets an individual event of the user
+app.get('/cbt/event/:id/:cbt_id', cbt.handleCBTEventGet(db));
+// gets (up to) 10 most recent cbt events of the user
+app.get('/cbt/events/:id/', cbt.handleCBTEventMultipleGet(db));
 
 // Coping Skills Routes
 // Get all user's coping skills.
