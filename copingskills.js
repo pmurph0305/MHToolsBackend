@@ -121,7 +121,11 @@ const handleCopingSkillsSharePut = (db) => (req, res) => {
 
 const handleCopingSkillsSharedGet = (db) => (req, res) => {
     // Get shared coping skills.
-    const { id, type } = req.params;
+    const { type } = req.params;
+    let { id } = req.params;
+    if (id === 'null') {
+        id = -1;
+    }
     db('copingskills')
         // .select('shared_from_id')
         .select(db.raw('ARRAY_AGG(shared_from_id) as added'))
