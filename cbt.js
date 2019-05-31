@@ -1,5 +1,4 @@
 const handleCBTEventGet = (db) => (req, res) => {
-    console.log('def');
     const { id, cbt_id } = req.params;
     if (id && cbt_id) {
         db('cbt_events')
@@ -20,9 +19,7 @@ const handleCBTEventGet = (db) => (req, res) => {
 }
 
 const handleCBTEventMultipleGet = (db) => (req, res) => {
-    console.log('abc');
     const { id } = req.params;
-    console.log('id', id);
     if (id) {
         db('cbt_events')
         .select()
@@ -33,7 +30,6 @@ const handleCBTEventMultipleGet = (db) => (req, res) => {
             res.status(200).json(data);
         })
         .catch(error => {
-            console.log(error);
             return res.sendStatus(500);
         })
     } else {
@@ -45,19 +41,18 @@ const handleCBTEventMultipleGet = (db) => (req, res) => {
 const handleCBTEventPost = (db) => (req, res) => {
     const { id } = req.params;
     const { data } = req.body;
-    console.log(id, data);
     if (id && data) {
         db('cbt_events')
         .insert({
             user_id: id,
             date: data.date,
             situation: data.situation,
-            automatic_thoughts: data.automaticThoughts,
-            rating_before: data.ratingBefore,
-            thinking_styles: data.thinkingStyles,
-            alternative_thoughts: data.alternativeThoughts,
-            evidence_conclusions: data.evidenceConclusions,
-            rating_after: data.ratingAfter
+            automatic_thoughts: data.automatic_thoughts,
+            rating_before: data.rating_before,
+            thinking_styles: data.thinking_styles,
+            alternative_thoughts: data.alternative_thoughts,
+            evidence_conclusions: data.evidence_conclusions,
+            rating_after: data.rating_after
         })
         .then(success => {
             res.status(200).json("Success");
