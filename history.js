@@ -44,7 +44,53 @@ const handleHistoryGetDM = (db) => (req, res) => {
     });
 }
 
+const handleHistoryGetCBTThinkingStyles = (db) => (req, res) => {
+    const {id} = req.params;
+    db('cbt_events')
+    .select('thinking_styles')
+    .where({user_id: id})
+    .then(data => {
+        if (Array.isArray(data) && data.length) {
+            let result = [0,0,0,0,0,0,0];
+            data.forEach(entry => entry.thinking_styles.forEach((item, index) => {
+                if (item) {
+                    result[index] += 1;
+                }
+            }))
+            res.json({thinking_styles: result});
+        } else {
+            res.json("No CBT data found for user")
+        }
+    })
+    .catch(err => {
+        res.status(500).json("Error getting CBT data for user. " + err)
+        throw err;
+    })
+}
+
+const handleHistoryGetCBTRatings = (db) => (req, res) => {
+    const {id} = req.params;
+    db('cbt_events')
+    .select('rating_before', 'rating_after', 'date')
+    .orderBy('date', 'asc')
+    .where({user_id: id})
+    .then(data => {
+        console.log(data);
+        if (Array.isArray(data) && data.length) {
+            res.json(data);
+        } else {
+            res.json("No CBT data found for user")
+        }
+    })
+    .catch(err => {
+        res.status(500).json("Error getting CBT data for user. " + err)
+        throw err;
+    })
+}
+
 module.exports = {
     handleHistoryGetDM,
-    handleHistoryGetPHQ9
+    handleHistoryGetPHQ9,
+    handleHistoryGetCBTThinkingStyles ,
+    handleHistoryGetCBTRatings,
 }
