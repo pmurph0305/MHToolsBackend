@@ -49,11 +49,11 @@ app.post('/register', register.handleRegister(db, bcrypt));
 // CBT routes.
 // TODO: user verification when accessing user data.
 // adds a cbt event of the user to the database.
-app.post('/cbt/:id', cbt.handleCBTEventPost(db));
+app.post('/cbt/:id', requireAuthorization, cbt.handleCBTEventPost(db));
 // gets an individual event of the user
-app.get('/cbt/event/:id/:cbt_id', cbt.handleCBTEventGet(db));
+app.get('/cbt/event/:id/:cbt_id',requireAuthorization, cbt.handleCBTEventGet(db));
 // gets (up to) 10 most recent cbt events of the user
-app.get('/cbt/events/:id/', cbt.handleCBTEventMultipleGet(db));
+app.get('/cbt/events/:id/',requireAuthorization, cbt.handleCBTEventMultipleGet(db));
 
 // Coping Skills Routes
 // Get all user's coping skills.
