@@ -75,7 +75,6 @@ const handleHistoryGetCBTRatings = (db) => (req, res) => {
     .orderBy('date', 'asc')
     .where({user_id: id})
     .then(data => {
-        console.log(data);
         if (Array.isArray(data) && data.length) {
             res.json(data);
         } else {

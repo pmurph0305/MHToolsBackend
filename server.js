@@ -92,9 +92,9 @@ app.get('/history/dm/:id/', requireAuthorization, history.handleHistoryGetDM(db)
 // PHQ9 score by date
 app.get('/history/phq9/:id', requireAuthorization, history.handleHistoryGetPHQ9(db));
 // CBT Thinking styles
-app.get('/history/cbt/thinkingstyles/:id', history.handleHistoryGetCBTThinkingStyles(db));
-
-app.get('/history/cbt/ratings/:id', history.handleHistoryGetCBTRatings(db));
+app.get('/history/cbt/thinkingstyles/:id', requireAuthorization, history.handleHistoryGetCBTThinkingStyles(db));
+// CBT Before/After Ratings
+app.get('/history/cbt/ratings/:id', requireAuthorization, history.handleHistoryGetCBTRatings(db));
 
 // PHQ9 Routes
 app.get('/phq9/:id', requireAuthorization, phq9.handlePHQ9DataGet(db));
