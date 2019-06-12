@@ -1,8 +1,10 @@
 const jwtAuth = require("./jwtAuth");
 
+// primary route that does all the responses.
 const handleSignin = (db, crypt) => (req, res) => {
   const { authorization } = req.headers;
   if (authorization) {
+    // if theres an auth headed, verify then respond.
     jwtAuth
       .checkAuth(authorization)
       .then(reply => {
@@ -12,9 +14,10 @@ const handleSignin = (db, crypt) => (req, res) => {
         res.status(401).json("Unauthorized Request");
       });
   } else {
+    // otherwise, use the helper signin function.
     handleNewSignin(db, crypt, req)
-      .then(token => {
-        res.status(200).json(token);
+      .then(data => {
+        res.status(200).json(data);
       })
       .catch(err => {
         res.status(400).json(err);
@@ -24,6 +27,10 @@ const handleSignin = (db, crypt) => (req, res) => {
 
 const handleNewSignin = (db, bcrypt, req) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return Promise.reject("Invalid signin request");
+  }
+  // verify email & pass.
   return db("users")
     .select("email", "id", "hash")
     .where("email", email)
@@ -32,6 +39,7 @@ const handleNewSignin = (db, bcrypt, req) => {
         .compare(password, data[0].hash)
         .then(isCorrectPassword => {
           return isCorrectPassword
+            // authorize user by creating JWT & return ({id, token})
             ? jwtAuth.authorizeNewSesssion(email, data[0].id)
             : Promise.reject("Invalid password");
         })
