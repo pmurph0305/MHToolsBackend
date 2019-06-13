@@ -38,7 +38,7 @@ const requireAuthorization = (req, res, next) => {
 const authorizeNewSesssion = (email, id) => {
   // create a signed JWT token with the data email and id in it.
   const token = signAuthToken({email, id});
-  return ({id, token})
+  return Promise.resolve(({id, token}));
   // return the created redit token, along with the user's id after storing it in redis db.
   // return createRedisToken(token, 1)
   //   .then(() => ({ id, token }))
