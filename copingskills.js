@@ -252,9 +252,3 @@ module.exports = {
     handleCopingSkillsSharedPost,
     handleCopingSkillsSharePut,
 }
-
-//CREATE TABLE copingskills (skill_id SERIAL PRIMARY KEY, user_id INTEGER REFERENCES users(id), title VARCHAR NOT NULL, description VARCHAR NOT NULL, date_added DATE NOT NULL DEFAULT CURRENT_DATE, rank INTEGER NOT NULL, shared BOOLEAN NOT NULL DEFAULT FALSE);
-
-
-
-// CREATE TABLE sharedskills (shared_id SERIAL PRIMARY KEY, skill_id INTEGER REFERENCES copingskills(skill_id), votes INTEGER NOT NULL DEFAULT 0, vote_ids INTEGER ARRAY)

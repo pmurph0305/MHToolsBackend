@@ -71,16 +71,3 @@ module.exports = {
     handleCBTEventMultipleGet,
     handleCBTEventPost,
 }
-
-// CREATE TABLE cbt_events (
-//     cbt_id serial PRIMARY KEY,
-//     user_id INTEGER REFERENCES users(id),
-//     date DATE NOT NULL DEFAULT NOW(),
-//     situation VARCHAR(600) NOT NULL DEFAULT '',
-//     automatic_thoughts VARCHAR(1500) NOT NULL DEFAULT '',
-//     rating_before SMALLINT NOT NULL DEFAULT 50,
-//     thinking_styles BOOLEAN[7] NOT NULL DEFAULT '{false,false,false,false,false,false,false}',
-//     alternative_thoughts VARCHAR(1500) NOT NULL DEFAULT '',
-//     evidence_conclusions VARCHAR(1500) NOT NULL DEFAULT '',
-//     rating_after SMALLINT NOT NULL DEFAULT 50
-// );

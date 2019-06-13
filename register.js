@@ -21,11 +21,11 @@ const handleRegister = (db, bcrypt) => (req, res) => {
                 res.status(200).json(token);
             })
             .catch(err => {
-                res.status(500).json("Error creating session. Please try to sign in.")
+                res.status(500).json("Error creating session. Please try to sign in."+ err)
             })
         })
         .catch(err => {
-            res.status(500).json("Error working with database. Please try to register again.")
+            res.status(500).json("Error working with database. Please try to register again." + err)
         })
     }
 }

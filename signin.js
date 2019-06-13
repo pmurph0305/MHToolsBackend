@@ -58,13 +58,3 @@ const handleNewSignin = (db, bcrypt, req) => {
 module.exports = {
   handleSignin
 };
-
-//schema: id, user, email, hash, date joined
-
-// bcrypt.hash(pass, saltRounds).then(function(hash) {
-//     db('users')
-//     .where('email', email)
-//     .update({ hash: hash })
-//     .then(d=> console.log('d', d))
-//     .catch(e => console.log('e', e))
-// });

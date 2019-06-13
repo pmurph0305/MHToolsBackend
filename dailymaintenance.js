@@ -237,5 +237,3 @@ module.exports = {
     handleDailyMaintenancePutComplete,
     handleDailyMaintenanceDelete,
 }
-
-// CREATE TABLE dmtasks (task_id SERIAL PRIMARY KEY, user_id INTEGER REFERENCES users(id), task VARCHAR NOT NULL, completed BOOLEAN NOT NULL, date DATE NOT NULL)
