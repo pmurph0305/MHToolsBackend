@@ -4,7 +4,7 @@ const jwtAuth = require("./jwtAuth");
 const handleSignin = (db, crypt) => (req, res) => {
   const { authorization } = req.headers;
   if (authorization) {
-    // if theres an auth headed, verify then respond.
+    // if theres an auth header, verify then respond.
     jwtAuth
       .checkAuth(authorization)
       .then(reply => {
