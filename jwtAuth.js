@@ -1,17 +1,24 @@
 //const redis = require("redis");
 //const redisClient = redis.createClient();
 const jwt = require("jsonwebtoken");
+const options = {
+  algorithm: 'HS256',
+  expiresIn: '2d',
+}
+const SECRET_JWT = 'secret';
+
 
 // If authorization is required, checks to make sure a valid JWT token was sent.
 const requireAuthorization = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization) {
+  let { authorization } = req.headers;
+  if (!authorization || authorization.indexOf("Bearer") === -1) {
     // if we don't have the auth header, it's.. unauthorized.
     return res.status(401).json("Unauthorized Request");
   } else {
+    authorization = authorization.replace('Bearer ', '');
     // make sure it's a valid JWT token.
     // TODO: actual secret key.
-    return jwt.verify(authorization, "secret", function(jwtErr, decoded) {
+    return jwt.verify(authorization, SECRET_JWT, function(jwtErr, decoded) {
       if (!jwtErr && decoded) {
         // make sure it exists in redis / hasn't expired.
         // return redisClient.get(authorization, function(err, reply) {
@@ -25,7 +32,7 @@ const requireAuthorization = (req, res, next) => {
         // });
         return next();
       } else {
-        console.log("JWT Error", jwtErr);
+        console.log("JWT Error 1:", jwtErr);
         return res.status(401).json("Unauthorized Request");
       }
     });
@@ -59,14 +66,15 @@ const createRedisToken = (key, value) => {
 // otherwise rejects with the error (redis or jwt).
 // Returns a promise.
 const checkAuth = token => {
+  token = token.replace('Bearer ', '')
   return new Promise(function(resolve, reject) {
-    jwt.verify(token, "secret", function(jwtErr, decoded) {
+    jwt.verify(token, SECRET_JWT, function(jwtErr, decoded) {
       if(!jwtErr) {
         // resolve the promise with the decoded data.
         resolve(decoded.data);
       } else {
         // reject the promise, invalid token.
-        console.log("JWT Error:", jwtErr);
+        console.log("JWT Error 2:", jwtErr);
         reject(jwtErr);
       }
     })

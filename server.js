@@ -4,7 +4,6 @@ const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-
 // Modules for each page.
 const cbt = require('./cbt');
 const copingSkills = require('./copingskills');

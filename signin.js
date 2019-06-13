@@ -28,6 +28,7 @@ const handleSignin = (db, crypt) => (req, res) => {
 const handleNewSignin = (db, bcrypt, req) => {
   const { email, password } = req.body;
   if (!email || !password) {
+    console.log('e')
     return Promise.reject("Invalid signin request");
   }
   // verify email & pass.
