@@ -29,9 +29,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const PORT = process.env.PORT;
-app.listen(PORT || 3001, ()=> {
-    console.log(`working on port ${PORT ? PORT: 3001}`);
+const PORT = (process.env.PORT ? process.env.PORT: 3001);
+app.listen(PORT, ()=> {
+    console.log(`working on port ${PORT}`);
 });
 
 app.get('/', (req, res) => {
