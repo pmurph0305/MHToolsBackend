@@ -20,10 +20,8 @@ const knex = require('knex');
 const db = knex({
     client: 'pg',
     connection: {
-      host : '127.0.0.1',
-      user : 'postgres',
-      password : 'test',
-      database : 'mhtoolsdb'
+      host : process.env.DATABASE_URL,
+      ssl: true,
     }
   });
 
@@ -31,8 +29,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-app.listen(3001, ()=> {
-    console.log("working on port 3001");
+const PORT = process.env.PORT;
+app.listen(PORT || 3001, ()=> {
+    console.log(`working on port ${PORT ? PORT: 3001}`);
 });
 
 app.get('/', (req, res) => {

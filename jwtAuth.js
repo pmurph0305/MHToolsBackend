@@ -1,5 +1,5 @@
-const redis = require("redis");
-const redisClient = redis.createClient();
+//const redis = require("redis");
+//const redisClient = redis.createClient();
 const jwt = require("jsonwebtoken");
 
 // If authorization is required, checks to make sure a valid JWT token was sent.
