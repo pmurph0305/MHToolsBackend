@@ -17,24 +17,24 @@ const signin = require('./signin');
 // database set up
 const knex = require('knex');
 // heroku running
-const db = knex({
-  client: 'pg',
-  connection: {
-    connectionString : process.env.DATABASE_URL,
-    ssl: true,
-  }
-});
-
-// Local running.
 // const db = knex({
 //   client: 'pg',
 //   connection: {
-//     host : '127.0.0.1',
-//     user : 'postgres',
-//     password : 'test',
-//     database : 'mhtoolsdb'
+//     connectionString : process.env.DATABASE_URL,
+//     ssl: true,
 //   }
 // });
+
+// Local running.
+const db = knex({
+  client: 'pg',
+  connection: {
+    host : '127.0.0.1',
+    user : 'postgres',
+    password : 'test',
+    database : 'mhtoolsdb'
+  }
+});
 
 
 const app = express();

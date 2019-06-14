@@ -4,9 +4,11 @@ const jwt = require("jsonwebtoken");
 const options = {
   algorithm: 'HS256',
   expiresIn: '2d',
+  issuer: 'mhtools'
 }
-const SECRET_JWT = 'secret';
 
+const SECRET_JWT = 'secret';
+//const SECRET_JWT = process.env.SECRET_JWT;
 
 // If authorization is required, checks to make sure a valid JWT token was sent.
 const requireAuthorization = (req, res, next) => {
@@ -18,7 +20,7 @@ const requireAuthorization = (req, res, next) => {
     authorization = authorization.replace('Bearer ', '');
     // make sure it's a valid JWT token.
     // TODO: actual secret key.
-    return jwt.verify(authorization, SECRET_JWT, function(jwtErr, decoded) {
+    return jwt.verify(authorization, SECRET_JWT, options, function(jwtErr, decoded) {
       if (!jwtErr && decoded) {
         // make sure it exists in redis / hasn't expired.
         // return redisClient.get(authorization, function(err, reply) {
@@ -68,7 +70,7 @@ const createRedisToken = (key, value) => {
 const checkAuth = token => {
   token = token.replace('Bearer ', '')
   return new Promise(function(resolve, reject) {
-    jwt.verify(token, SECRET_JWT, function(jwtErr, decoded) {
+    jwt.verify(token, SECRET_JWT, options, function(jwtErr, decoded) {
       if(!jwtErr) {
         // resolve the promise with the decoded data.
         resolve(decoded.data);
@@ -105,7 +107,7 @@ const checkAuth = token => {
 // Signs a JWT token containing the given data.
 const signAuthToken = data => {
   // TODO: use an actual secret key..
-  return jwt.sign({ data: data }, "secret", { expiresIn: "48h" });
+  return jwt.sign({ data: data }, SECRET_JWT, options);
 };
 
 module.exports = {

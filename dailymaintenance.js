@@ -46,6 +46,7 @@ const handleDailyMaintenanceGet = (db, knex) => (req, res) => {
                                         task: task['task'],
                                         completed: false,
                                         rank: task['rank'],
+                                        date: date,
                                     }).into('dmtasks')
                                     .returning('*')
                                     .transacting(trx)

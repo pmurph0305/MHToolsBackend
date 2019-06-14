@@ -28,7 +28,6 @@ const handleSignin = (db, crypt) => (req, res) => {
 const handleNewSignin = (db, bcrypt, req) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    console.log('e')
     return Promise.reject("Invalid signin request");
   }
   // verify email & pass.
@@ -45,12 +44,12 @@ const handleNewSignin = (db, bcrypt, req) => {
             : Promise.reject("Invalid password");
         })
         .catch(err => {
-          console.log(err);
+          console.log('Signin pass error:' + err);
           return Promise.reject("bcrypt error");
         });
     })
     .catch(err => {
-      console.log(err);
+      console.log('Signin DB Error:' + err);
       // All errors respond with this promise, but are logged on backend.
       return Promise.reject("Invalid signin request.");
     });
