@@ -159,7 +159,7 @@ const handleDailyMaintenancePost = (db) => (req, res) => {
     // TODO: handle adding tasks to previous date, or reject them and only allow new tasks
     // on the current date.
     const {id} = req.params;
-    const {task, rank} = req.body;
+    const {task, rank, date} = req.body;
     // insert new task, and return it.
     db.returning('*')
     .insert({
@@ -167,6 +167,7 @@ const handleDailyMaintenancePost = (db) => (req, res) => {
         task: task,
         completed: false,
         rank: rank,
+        date: date
     })
     .into('dmtasks')
     .then(task => res.json(task))
