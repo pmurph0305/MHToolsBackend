@@ -2,12 +2,12 @@
 //const redisClient = redis.createClient();
 const jwt = require("jsonwebtoken");
 const options = {
-  algorithm: 'HS256',
-  expiresIn: '2d',
-  issuer: 'mhtools'
-}
+  algorithm: "HS256",
+  expiresIn: "2d",
+  issuer: "mhtools"
+};
 
-const SECRET_JWT = 'secret';
+const SECRET_JWT = "secret";
 //const SECRET_JWT = process.env.SECRET_JWT;
 
 // If authorization is required, checks to make sure a valid JWT token was sent.
@@ -17,11 +17,15 @@ const requireAuthorization = (req, res, next) => {
     // if we don't have the auth header, it's.. unauthorized.
     return res.status(401).json("Unauthorized Request");
   } else {
-    authorization = authorization.replace('Bearer ', '');
+    authorization = authorization.replace("Bearer ", "");
     // make sure it's a valid JWT token.
     // TODO: actual secret key.
-    return jwt.verify(authorization, SECRET_JWT, options, function(jwtErr, decoded) {
-      if (!jwtErr && decoded) {
+    return jwt.verify(authorization, SECRET_JWT, options, function(
+      jwtErr,
+      decoded
+    ) {
+      // make sure theres no error, the jwt was decoded, and the included jwt user id matches the request user id.
+      if (!jwtErr && decoded && decoded.data.id == req.params.id) {
         // make sure it exists in redis / hasn't expired.
         // return redisClient.get(authorization, function(err, reply) {
         //   if (err || !reply) {
@@ -46,8 +50,8 @@ const requireAuthorization = (req, res, next) => {
 // returns the id & token in an object.
 const authorizeNewSesssion = (email, id) => {
   // create a signed JWT token with the data email and id in it.
-  const token = signAuthToken({email, id});
-  return Promise.resolve(({id, token}));
+  const token = signAuthToken({ email, id });
+  return Promise.resolve({ id, token });
   // return the created redit token, along with the user's id after storing it in redis db.
   // return createRedisToken(token, 1)
   //   .then(() => ({ id, token }))
@@ -68,10 +72,10 @@ const createRedisToken = (key, value) => {
 // otherwise rejects with the error (redis or jwt).
 // Returns a promise.
 const checkAuth = token => {
-  token = token.replace('Bearer ', '')
+  token = token.replace("Bearer ", "");
   return new Promise(function(resolve, reject) {
     jwt.verify(token, SECRET_JWT, options, function(jwtErr, decoded) {
-      if(!jwtErr) {
+      if (!jwtErr) {
         // resolve the promise with the decoded data.
         resolve(decoded.data);
       } else {
@@ -79,7 +83,7 @@ const checkAuth = token => {
         console.log("JWT Error 2:", jwtErr);
         reject(jwtErr);
       }
-    })
+    });
     // make sure token exists in redis db (it hasn't expired)
     // redisClient.get(token, function(err, reply) {
     //   if (reply && !err) {
