@@ -39,7 +39,7 @@ const PORT = process.env.PORT ? process.env.PORT : 3001;
 // whitelist localhost if running locally.
 var whitelist = process.env.PORT
   ? ["https://pmurph0305.github.io/MHToolsFrontend"]
-  : ["http://localhost:3000", "https://pmurph0305.github.io/MHToolsFrontend"];
+  : ["http://localhost:3000", "https://pmurph0305.github.io"];
 var corsOptions = {
   origin: function(origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
