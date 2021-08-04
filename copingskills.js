@@ -190,6 +190,7 @@ const handleCopingSkillsSharedGet = (db) => (req, res) => {
 }
 
 
+
 // Adds a shared skill to a users own list.
 const handleCopingSkillsSharedPost = (db) => (req, res) => {
     const { id, skill_id } = req.params;
