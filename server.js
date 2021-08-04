@@ -37,9 +37,9 @@ const db = knex({
 // });
 const PORT = process.env.PORT ? process.env.PORT : 3001;
 // whitelist localhost if running locally.
-var whitelist = process.env.PORT
-  ? ["https://pmurph0305.github.io", "https://pmurph0305.com"]
-  : ["http://localhost:3000", "https://pmurph0305.github.io", "https://pmurph0305.com"];
+var whitelist = ["https://pmurph0305.com"];
+  // ? ["https://pmurph0305.github.io", "https://pmurph0305.com"]
+  // : ["http://localhost:3000", "https://pmurph0305.github.io", "https://pmurph0305.com"];
 var corsOptions = {
   origin: function(origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
