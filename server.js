@@ -37,25 +37,25 @@ const db = knex({
 // });
 const PORT = process.env.PORT ? process.env.PORT : 3001;
 // whitelist localhost if running locally.
-var whitelist = ["https://pmurph0305.com"];
-  // ? ["https://pmurph0305.github.io", "https://pmurph0305.com"]
-  // : ["http://localhost:3000", "https://pmurph0305.github.io", "https://pmurph0305.com"];
-var corsOptions = {
-  origin: function(origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  optionsSucessStatus: 200
-};
+// var whitelist = ["https://pmurph0305.com"];
+//   // ? ["https://pmurph0305.github.io", "https://pmurph0305.com"]
+//   // : ["http://localhost:3000", "https://pmurph0305.github.io", "https://pmurph0305.com"];
+// var corsOptions = {
+//   origin: function(origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   optionsSucessStatus: 200
+// };
 
 
 // express app.
 const app = express();
 app.use(bodyParser.json());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(helmet());
 app.use(
   helmet.contentSecurityPolicy({
