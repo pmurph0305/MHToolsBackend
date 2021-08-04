@@ -57,13 +57,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"]
-    }
-  })
-);
 
 app.listen(PORT, () => {
   console.log(`working on port ${PORT}`);
