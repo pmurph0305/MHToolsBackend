@@ -184,6 +184,9 @@ const handleCopingSkillsSharedGet = (db) => (req, res) => {
                 res.status(400).json("Improper shared coping skill request");
             }
         })
+        .catch(err => {
+          res.status(500).json("Error getting shared coping skills.")
+        });
 }
 
 
