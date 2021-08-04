@@ -51,6 +51,7 @@ var corsOptions = {
   optionsSucessStatus: 200
 };
 
+
 const app = express();
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
