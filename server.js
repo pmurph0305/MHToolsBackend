@@ -55,7 +55,7 @@ var corsOptions = {
 // express app.
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(
   helmet.contentSecurityPolicy({
