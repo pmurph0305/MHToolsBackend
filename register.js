@@ -7,7 +7,9 @@ const handleRegister = (db, bcrypt) => (req, res) => {
   if (!username || !email || !password) {
     res.status(400).json("Invalid register request");
   } else {
+    console.log("hashing.");
     const hash = bcrypt.hashSync(password, saltRounds);
+    console.log("accessing db.");
     db("users")
       .insert({
         username: username,
@@ -16,9 +18,11 @@ const handleRegister = (db, bcrypt) => (req, res) => {
       })
       .returning(["email", "id"])
       .then(data => {
+        console.log("then data");
         jwtAuth
           .authorizeNewSesssion(data[0].email, data[0].id)
           .then(token => {
+            console.log("then response.");
             res.status(200).json(token);
           })
           .catch(err => {
