@@ -31,30 +31,30 @@ const db = knex({
 //   connection: {
 //     host: "127.0.0.1",
 //     user: "postgres",
-//     password: "test",
+//     password: "postgres",
 //     database: "mhtoolsdb"
 //   }
 // });
 const PORT = process.env.PORT ? process.env.PORT : 3001;
 // whitelist localhost if running locally.
-var whitelist = process.env.PORT
-  ? ["https://pmurph0305.github.io", "https://pmurph0305.com"]
-  : ["http://localhost:3000", "https://pmurph0305.github.io"];
-var corsOptions = {
-  origin: function(origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  optionsSucessStatus: 200
-};
+// var whitelist = process.env.PORT
+//   ? ["https://pmurph0305.github.io", "https://pmurph0305.com"]
+//   : ["http://localhost:3000", "https://pmurph0305.github.io"];
+// var corsOptions = {
+//   origin: function(origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   optionsSucessStatus: 200
+// };
 
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(helmet());
 app.use(
   helmet.contentSecurityPolicy({
@@ -63,6 +63,10 @@ app.use(
     }
   })
 );
+
+app.get("/test", (req, res) => {
+  res.send("Test working.");
+})
 
 app.listen(PORT, () => {
   console.log(`working on port ${PORT}`);
