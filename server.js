@@ -15,20 +15,20 @@ const register = require("./register");
 const signin = require("./signin");
 
 // database set up
-const knex = require("knex");
+// const knex = require("knex");
 // heroku running
-const db = knex({
+const db = require("knex")({
   client: "pg",
   connection: {
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
-  }
+  },
 });
 // db.select().from("users").then((item) => {
 //   console.log(item);
 // })
 // Local running.
-// const db = knex({
+// const db = require("knex")({
 //   client: "pg",
 //   connection: {
 //     host: "127.0.0.1",
@@ -39,6 +39,9 @@ const db = knex({
 // });
 db.select().from("users").then((item) => {
   console.log(item);
+}).catch((err)=>{
+  console.log(err);
+  console.log("Error with db.");
 })
 const PORT = process.env.PORT ? process.env.PORT : 3001;
 // whitelist localhost if running locally.
