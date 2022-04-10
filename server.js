@@ -24,7 +24,9 @@ const db = knex({
     ssl: { rejectUnauthorized: false },
   }
 });
-
+// db.select().from("users").then((item) => {
+//   console.log(item);
+// })
 // Local running.
 // const db = knex({
 //   client: "pg",
@@ -35,6 +37,9 @@ const db = knex({
 //     database: "mhtoolsdb"
 //   }
 // });
+db.select().from("users").then((item) => {
+  console.log(item);
+})
 const PORT = process.env.PORT ? process.env.PORT : 3001;
 // whitelist localhost if running locally.
 // var whitelist = process.env.PORT

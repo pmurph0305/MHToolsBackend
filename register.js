@@ -10,6 +10,7 @@ const handleRegister = (db, bcrypt) => (req, res) => {
     console.log("hashing.");
     const hash = bcrypt.hashSync(password, saltRounds);
     console.log("accessing db.");
+    console.log(db.client.connectionSettings);
     db("users")
       .insert({
         username: username,
