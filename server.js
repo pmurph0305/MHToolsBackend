@@ -16,6 +16,8 @@ const signin = require("./signin");
 
 // database set up
 // const knex = require("knex");
+
+
 // heroku running
 const db = require("knex")({
   client: "pg",
@@ -24,9 +26,7 @@ const db = require("knex")({
     ssl: { rejectUnauthorized: false },
   },
 });
-// db.select().from("users").then((item) => {
-//   console.log(item);
-// })
+
 // Local running.
 // const db = require("knex")({
 //   client: "pg",
@@ -37,6 +37,7 @@ const db = require("knex")({
 //     database: "mhtoolsdb"
 //   }
 // });
+// console.log(db.client.connectionSettings);
 db.select().from("users").then((item) => {
   console.log(item);
 }).catch((err)=>{

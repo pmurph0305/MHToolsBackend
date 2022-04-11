@@ -14,14 +14,15 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.6",
+    "bluebird": "^3.7.2",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "helmet": "^3.21.1",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.16.3",
+    "knex": "^0.21.1",
     "nodemon": "^1.18.10",
-    "pg": "^7.8.1",
+    "pg": "^8.0.3",
     "redis": "^2.8.0"
   }
 }
